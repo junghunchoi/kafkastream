@@ -7,16 +7,18 @@
         <th>종목명</th>
         <th>현재가</th>
         <th>대비</th>
+        <th>등락율</th>
         <th>거래량</th>
       </tr>
       </thead>
       <tbody>
       <tr v-for="stock in stocks" :key="stock.name">
         <td>{{ stock.name }}</td>
-        <td>{{ stock.price }}</td>
-        <td :class="{ 'up': stock.change > 0, 'down': stock.change < 0 }">
-          {{ stock.change > 0 ? '+' : '' }}{{ stock.change }}
+        <td>{{ stock.current_price }}</td>
+        <td :class="{ 'up': stock.price_change > 0, 'down': stock.price_change < 0 }">
+          {{ stock.price_change > 0 ? '+' : '' }}{{ stock.price_change }}
         </td>
+        <td>{{stock.change_rate}}</td>
         <td>{{ stock.volume }}</td>
       </tr>
       </tbody>
@@ -42,7 +44,7 @@ export default {
     }
 
     onMounted(() => {
-      eventSource = new EventSource('http://localhost:8080/stocks')
+      eventSource = new EventSource('http://localhost:8080/sse')
       eventSource.onmessage = (event) => {
         const data = JSON.parse(event.data)
         updateStock(data)
